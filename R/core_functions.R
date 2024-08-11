@@ -584,6 +584,7 @@ run_pca <- function(dataset="ST002016_RPESIPOS_50_filtered_dataset.xlsx",
   #gg <- ggplotly(g,tooltip = c("label"))
   #gg
   ggsave(sub(".xlsx$",".pdf",dataset))
+  print(sub(".xlsx$",".pdf",dataset))
 }
 
 run_pca_plots <- function(project_location=project_location,studyid=studyid,detectionFrequency=5) {
