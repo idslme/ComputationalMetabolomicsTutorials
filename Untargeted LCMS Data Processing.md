@@ -103,6 +103,10 @@ get_compound_correlation_network(dataset=input_dataset,
 
 ````
 
+Peak tables (individual and joint) are located at "project_location/results/study_id/analysis_mode/IPA"
+Initial version of the dataset is available at "project_location/results/study_id/analysis_mode/DataFiltering"
+Formula annotation tables are located at "project_location/results/study_id/analysis_mode/UFA"
+
 #### Citations
 * Barupal, D. K., & Fiehn, O. (2019). Generating the blood exposome database using a comprehensive text mining and database fusion approach. Environmental health perspectives, 127(9), 097008.
 * Baygi, S. F., Banerjee, S. K., Chakraborty, P., Kumar, Y., & Barupal, D. K. (2022). IDSL. UFA Assigns High-Confidence Molecular Formula Annotations for Untargeted LC/HRMS Data Sets in Metabolomics and Exposomics. Analytical chemistry, 94(39), 13315-13322.
