@@ -95,11 +95,10 @@ head(compound_details)
 View(compound_details)
 
 get_compound_correlation_network(dataset=input_dataset,
-                                 compoundId ="Peak153",
+                                 compoundId ="Peak1059",
                                  nodeLabel="BloodExposomeFormula",
                                  toolTip = "bloodExposome_[M-H]-",
-                                 FormulaFilteringRegex ="C8",
-                                 #FormulaFilteringRegex ="(C)",
+                                 FormulaFilteringRegex =".",
                                  cor_cutoff = 0.5)
 
 ````
