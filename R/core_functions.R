@@ -44,7 +44,7 @@ pacman::p_load(VennDiagram)
 pacman::p_load(wesanderson)
 
 osType <- Sys.info()[['sysname']]
-number_processing_threads  = 8
+number_processing_threads  = 40
 
 setup_project_directory <- function(project_location=project_location,studyid=studyid) {
 
@@ -158,7 +158,7 @@ setup_project_directory <- function(project_location=project_location,studyid=st
 
 ## get retention files ##
 
-get_rt_correction_files <- function(studydata = "/home/metabolite/rawdata/ST002016/RP_NEG/MZML/"){
+get_rt_correction_files <- function(studydata = "/home/metabolite/rawdata/ST002016/RPESINEG/"){
 
   if(!dir.exists(paste0(studydata, "/tsdata"))) {
     dir.create(paste0(studydata, "/tsdata"))
@@ -175,13 +175,59 @@ get_rt_correction_files <- function(studydata = "/home/metabolite/rawdata/ST0020
                paste0(studydata,'tsdata/',gsub("mzML$","ts",filename))  )
   }
 
-  #library(parallel)
-  res12 <- lapply(filelist, getTimeStampData)
+  ## Processing OS
+  osType <- Sys.info()[['sysname']]
+  ##
+  if (osType == "Windows") {
+    ##
+
+    clust <- makeCluster(number_processing_threads)
+    clusterExport(clust, ls(), envir = environment())
+
+    ##
+    clusterExport(clust, ls(), envir = environment())
+    res12 <- parLapply(clust, filelist, getTimeStampData)
+    ##
+    stopCluster(clust)
+    closeAllConnections()
+    ##
+    #########################################################################
+    ##
+  } else {
+    ##
+    res12 <- mclapply(filelist, getTimeStampData,mc.cores = number_processing_threads)
+    ##
+    closeAllConnections()
+    ##
+  }
+
+
 
   ts_files <- dir(paste0(studydata,"tsdata"),full.names = T)
   ts_files <- ts_files[grep("ts$",ts_files)]
 
-  ts_list <- lapply(ts_files, function(ff){read.delim(ff, header = F)})
+  #ts_list <- mclapply(ts_files, function(ff){read.delim(ff, header = F)}, mc.cores = 10)
+
+  if (osType == "Windows") {
+    ##
+    clust <- makeCluster(number_processing_threads)
+    ##
+    clusterExport(clust, ls(), envir = environment())
+    ts_list <- parLapply(clust, ts_files, function(ff){read.delim(ff, header = F)})
+    ##
+    stopCluster(clust)
+    closeAllConnections()
+    ##
+    #########################################################################
+    ##
+  } else {
+    ##
+    ts_list <- mclapply(ts_files, function(ff){read.delim(ff, header = F)}, mc.cores = number_processing_threads)
+    ##
+    closeAllConnections()
+    ##
+  }
+
   ts_list.df <- do.call(rbind, ts_list)
   ts_list.df$date <- as.Date(ts_list.df$V5)
 
@@ -264,6 +310,7 @@ generate_idsl_parameters_files_all_modes <- function(project_location=project_lo
     ipa_param_0 <- data.frame(readxl::read_xlsx(paste0(parameter_location,"IPA_parameters_all_files.xlsx"), sheet = "parameters"), stringsAsFactors = F, check.names = F)
 
     ipa_param_0$`User provided input`[which(ipa_param_0$`Parameter ID`=="PARAM0002")] <- "NO"
+    ipa_param_0$`User provided input`[which(ipa_param_0$`Parameter ID`=="PARAM0006")] <- number_processing_threads
     ipa_param_0$`User provided input`[which(ipa_param_0$`Parameter ID`=="PARAM0007")] <- inputLocation
     ipa_param_0$`User provided input`[which(ipa_param_0$`Parameter ID`=="PARAM0010")] <- paste0(outputLocation, "/IPA")
     ipa_param_0$`User provided input`[which(ipa_param_0$`Parameter ID`=="PARAM0011")] <- baseline_noise_cutoff
@@ -283,6 +330,7 @@ generate_idsl_parameters_files_all_modes <- function(project_location=project_lo
     ipa_param_1$`User provided input`[which(ipa_param_1$`Parameter ID`=="PARAM0001")] <- "NO"
     ipa_param_1$`User provided input`[which(ipa_param_1$`Parameter ID`=="PARAM0002")] <- "YES"
     ipa_param_1$`User provided input`[which(ipa_param_1$`Parameter ID`=="PARAM0003")] <- "NO"
+    ipa_param_0$`User provided input`[which(ipa_param_0$`Parameter ID`=="PARAM0006")] <- number_processing_threads
     ipa_param_1$`User provided input`[which(ipa_param_1$`Parameter ID`=="PARAM0007")] <- inputLocation
     ipa_param_1$`User provided input`[which(ipa_param_1$`Parameter ID`=="PARAM0010")] <- paste0(outputLocation, "/IPA")
     ipa_param_1$`User provided input`[which(ipa_param_1$`Parameter ID`=="PARAM0029")] <- "YES"
@@ -300,6 +348,7 @@ generate_idsl_parameters_files_all_modes <- function(project_location=project_lo
     ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0002")] <- "NO"
     ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0003")] <- "NO"
     ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0004")] <- metabolon_ipdb
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0008")] <- number_processing_threads
     ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0009")] <- inputLocation
     ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0011")] <- paste0(outputLocation, "/IPA/peaklists")
     ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0012")] <- paste0(outputLocation, "/IPA/peak_alignment")
