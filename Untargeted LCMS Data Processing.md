@@ -60,7 +60,7 @@ setup_project_directory(project_location=project_location,studyid=studyid)
 ### Check the ST002016_sample_metadata.xlsx file under rawdata folder. For a new study, the metadata file must be re-created in the same structure.###
 
 sample_metadata_file <- paste0(project_location,"/rawdata/",studyid,"/ST002016_sample_metadata.xlsx")
-sample_metadata <- read_xlsx(sample_metadata_file, sheet = "RP_NEG") ## only positive mode data
+sample_metadata <- read_xlsx(sample_metadata_file, sheet = "RP_NEG") ## select the tab for one mode
 View(sample_metadata)
 sample_metadata
 
