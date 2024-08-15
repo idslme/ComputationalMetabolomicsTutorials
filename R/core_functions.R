@@ -44,7 +44,7 @@ pacman::p_load(VennDiagram)
 pacman::p_load(wesanderson)
 
 osType <- Sys.info()[['sysname']]
-number_processing_threads  = 10
+number_processing_threads  = 20
 
 
 setup_project_directory <- function(project_location=project_location,studyid=studyid) {
@@ -661,8 +661,8 @@ run_pca_plots <- function(project_location=project_location,studyid=studyid,dete
 
 
 get_compound_correlation_network <- function(dataset="ST002829_covid_diagnosis.xlsx",
-                                             compoundId ="CPD000016",
-                                             nodeLabel="compound_name",
+                                             compoundId ="Peak27934",
+                                             nodeLabel="BloodExposomeFormula",
                                              toolTip = "compound_name",
                                              FormulaFilteringRegex =".",
                                              cor_cutoff = 0.6) {
@@ -781,11 +781,10 @@ get_compound_correlation_network <- function(dataset="ST002829_covid_diagnosis.x
   edges$color[edges$value<0] <- "blue"
   correlating_compounds <<- nodes$label
   correlating_compounds_details <<- cdf[selected_index,]
-  vis_object <- visNetwork(nodes, edges, height = "600px", width = "600px")
-  visPhysics(vis_object, stabilization = F,   barnesHut = list(
-    gravitationalConstant = 50,
-    springConstant = 0.0000001,
-    springLength = 10
+  vis_object <- visNetwork(nodes, edges, height = "900px", width = "100%")
+  visPhysics(vis_object, enabled=F, stabilization = F,   forceAtlas2Based = list(
+    springLength = 50,
+    avoidOverlap=0
   ))
 }
 
