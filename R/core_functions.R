@@ -44,7 +44,8 @@ pacman::p_load(VennDiagram)
 pacman::p_load(wesanderson)
 
 osType <- Sys.info()[['sysname']]
-number_processing_threads  = 40
+number_processing_threads  = 10
+
 
 setup_project_directory <- function(project_location=project_location,studyid=studyid) {
 
@@ -169,10 +170,12 @@ get_rt_correction_files <- function(studydata = "/home/metabolite/rawdata/ST0020
 
   getTimeStampData <- function(ff) {
     filename <- ff
-    xdf <- readLines(paste0(studydata,filename), n=100)
-    writeLines(paste0(c(studydata,filename,0,10,
-                        strsplit(gsub(" |=","\t",xdf[grep("startTimeStamp=",xdf)]),"\t")[[1]][11]),collapse = "\t"),
-               paste0(studydata,'tsdata/',gsub("mzML$","ts",filename))  )
+    if(!file.exists(paste0(studydata,'tsdata/',gsub("mzML$","ts",filename)))) {
+      xdf <- readLines(paste0(studydata,filename), n=100)
+      writeLines(paste0(c(studydata,filename,0,10,
+                          strsplit(gsub(" |=","\t",xdf[grep("startTimeStamp=",xdf)]),"\t")[[1]][11]),collapse = "\t"),
+                 paste0(studydata,'tsdata/',gsub("mzML$","ts",filename))  )
+    }
   }
 
   ## Processing OS
@@ -671,34 +674,90 @@ get_compound_correlation_network <- function(dataset="ST002829_covid_diagnosis.x
   ndf <- ndf[,-1]
 
   #replacing missing values (NA/0) with row minimum
+  if (osType == "Windows") {
+    ##
+    clust <- makeCluster(number_processing_threads)
+    ##
+    clusterExport(clust, ls(), envir = environment())
+    ndf_0 <- parLapply(clust, 1:nrow(ndf), function(x){
+      vec <- as.numeric(ndf[x,])
+      x_vec <- vec
 
-  ndf_0 <- lapply(1:nrow(ndf), function (x) {
-    vec <- as.numeric(ndf[x,])
-    x_vec <- vec
+      vec <- vec[!is.na(vec)]
+      vec <- vec[which(vec!=0)]
+      y_min <- min(vec)
 
-    vec <- vec[!is.na(vec)]
-    vec <- vec[which(vec!=0)]
-    y_min <- min(vec)
+      x_vec[is.na(x_vec)] <- y_min
+      x_vec[is.na(x_vec)] <- y_min
+      x_vec
+    })
+    ##
+    stopCluster(clust)
+    closeAllConnections()
+    ##
+    #########################################################################
+    ##
+  } else {
+    ##
+    ndf_0 <- mclapply(1:nrow(ndf), function (x) {
+      vec <- as.numeric(ndf[x,])
+      x_vec <- vec
 
-    x_vec[is.na(x_vec)] <- y_min
-    x_vec[is.na(x_vec)] <- y_min
-    x_vec
-  })
+      vec <- vec[!is.na(vec)]
+      vec <- vec[which(vec!=0)]
+      y_min <- min(vec)
+
+      x_vec[is.na(x_vec)] <- y_min
+      x_vec[is.na(x_vec)] <- y_min
+      x_vec
+    }, mc.cores = number_processing_threads)
+    ##
+    closeAllConnections()
+    ##
+  }
 
   ndf_0 <- do.call(rbind, ndf_0)
 
   q_vec <- as.numeric(ndf[which(cdf$compound_id==compoundId),])
   x_index <- which(!is.na(q_vec)==T)
 
-  cor_vec <- lapply(1:nrow(ndf), function(y){
-    z_vec <- as.numeric(ndf[y,])
-    q_index <- which(!is.na(z_vec)==T)
 
-    w_index <- as.numeric(which(table(c(x_index,q_index))==2))
+  if (osType == "Windows") {
+    ##
+    clust <- makeCluster(number_processing_threads)
+    ##
+    clusterExport(clust, ls(), envir = environment())
+    cor_vec <- parLapply(clust, 1:nrow(ndf), function(y){
+      z_vec <- as.numeric(ndf[y,])
+      q_index <- which(!is.na(z_vec)==T)
 
-    cor_res <- cor.test(q_vec[w_index], z_vec[w_index],method = "spearman")
-    as.numeric(cor_res$estimate)
-  })
+      w_index <- as.numeric(which(table(c(x_index,q_index))==2))
+
+      cor_res <- cor.test(q_vec[w_index], z_vec[w_index],method = "spearman")
+      as.numeric(cor_res$estimate)
+    })
+    ##
+    stopCluster(clust)
+    closeAllConnections()
+    ##
+    #########################################################################
+    ##
+  } else {
+    ##
+    cor_vec <- mclapply(1:nrow(ndf), function(y){
+      z_vec <- as.numeric(ndf[y,])
+      q_index <- which(!is.na(z_vec)==T)
+
+      w_index <- as.numeric(which(table(c(x_index,q_index))==2))
+
+      cor_res <- cor.test(q_vec[w_index], z_vec[w_index],method = "spearman")
+      as.numeric(cor_res$estimate)
+    }, mc.cores = number_processing_threads)
+    ##
+    closeAllConnections()
+    ##
+  }
+
 
   cor_vec <- as.numeric(cor_vec)
 
