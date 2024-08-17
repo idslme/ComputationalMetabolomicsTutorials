@@ -27,4 +27,4 @@ mzml2msp <- function(mzmlfile= "E:/temp/testfile.mzML") {
   close(con1)
 }
 
-#mzml2msp("E:/temp/testfile.msp")
+#mzml2msp("E:/temp/testfile.mzML")
