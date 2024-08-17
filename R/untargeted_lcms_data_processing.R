@@ -32,7 +32,7 @@ setup_project_directory(project_location=project_location,studyid=studyid)
 
 ### Check the ST002016_sample_metadata.xlsx file under rawdata folder. For a new study, the metadata file must be re-created in the same structure.###
 
-sample_metadata_file <- paste0(project_location,"/rawdata/",studyid,"/ST002016_sample_metadata.xlsx")
+sample_metadata_file <- paste0(project_location,"/rawdata/",studyid,"/",studyid,"_sample_metadata.xlsx")
 sample_metadata <- read_xlsx(sample_metadata_file, sheet = "RP_NEG") ## only positive mode data
 View(sample_metadata)
 sample_metadata
@@ -64,7 +64,7 @@ run_pca_plots(project_location=project_location,studyid=studyid,detectionFrequen
 ### Chemical correlation analysis ##
 ####################################
 
-input_dataset <- "E:/temp/metabolomics_projects//results/ST002016/RP_NEG/DataFiltering/freq5/ST002016_RP_NEG_5_filtered_dataset.xlsx"
+input_dataset <- paste0(project_location, "/results/",studyid,"/RP_NEG/DataFiltering/freq5/",studyid,"_RP_NEG_5_filtered_dataset.xlsx")
 compound_details <- as.data.frame(readxl::read_xlsx(input_dataset, sheet = "data_dictionary"), stringsAsFactors = F, check.names = F)
 head(compound_details)
 View(compound_details)
