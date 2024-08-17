@@ -395,6 +395,51 @@ run_idsl_workflows <- function(project_location=project_location,studyid=studyid
     UFA_workflow(spreadsheet = paste0(parameter_location,"/",studyid,"_",analysis_mode,"_UFA_parameters_all_files_bloodexposome_ipdb.xlsx"))
   }
 }
+## PFAS Screening ##
+run_idsl_workflows_for_pfas_screening <- function(project_location=project_location,studyid=studyid) {
+
+  analysis_mode_arrary <- c("RP_NEG")
+
+  database_location <- paste0(project_location,"/databases/")
+  dataset_location <- paste0(project_location,"/dataset/")
+  parameter_location <- paste0(project_location,"/parameter/")
+  rawdata_location <- paste0(project_location,"/rawdata/")
+  results_location <- paste0(project_location,"/results/")
+
+  pfas_ipdb_neg <- paste0(database_location,"ipdb_pfas_neg.Rdata")
+
+  for(analysis_mode in analysis_mode_arrary) {
+
+    inputLocation = paste0(rawdata_location,studyid,"/",analysis_mode,"/MZML/") # forward slash is needed
+    outputLocation = paste0(results_location,studyid,"/",analysis_mode,"/")
+
+
+    ### UFA parameters file ###
+
+    ufa_params <- data.frame(readxl::read_xlsx(paste0(parameter_location,"UFA_parameters_all_files.xlsx"), sheet = "parameters"), stringsAsFactors = F, check.names = F)
+
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0001")] <- "NO"
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0002")] <- "NO"
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0003")] <- "NO"
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0004")] <- pfas_ipdb_neg
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0008")] <- number_processing_threads
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0009")] <- inputLocation
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0011")] <- paste0(outputLocation, "/IPA/peaklists")
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0012")] <- paste0(outputLocation, "/IPA/peak_alignment")
+    ufa_params$`User provided input`[which(ufa_params$`Parameter ID`=="PARAM0014")] <- paste0(outputLocation, "/UFA/pfas_ipdb")
+
+    export_object_0 <- list("parameters"=ufa_params)
+    openxlsx::write.xlsx(export_object_0,file=paste0(parameter_location,"/",studyid,"_",analysis_mode,"_UFA_parameters_all_files_pfas_ipdb.xlsx"))
+
+
+    if(length(dir(inputLocation)) < 6) next
+     ### Run the UFA Steps  ###
+    UFA_workflow(spreadsheet = paste0(parameter_location,"/",studyid,"_",analysis_mode,"_UFA_parameters_all_files_pfas_ipdb.xlsx"))
+
+  }
+}
+
+
 
 
 generate_dataset_version_0 <- function(rawdataMatrix = "",
