@@ -9,6 +9,16 @@ rm(list=ls()) # clear out the environment.
 ########################
 
 project_location <- "E:/temp/metabolomics_projects/"
+## change it to a location where you want to keep all your metabolomics studies. 
+
+setwd(project_location)
+if(!dir.exists(paste0(project_location,"/scripts/")) {
+  dir.create(paste0(project_location,"/scripts/"))
+  download.file("https://raw.githubusercontent.com/idslme/ComputationalMetabolomicsTutorials/main/R/core_functions.R", destfile=paste0(project_location,"/scripts/core_functions.R"))
+  download.file("https://raw.githubusercontent.com/idslme/ComputationalMetabolomicsTutorials/main/R/untargeted_lcms_data_processing.R", destfile=paste0(project_location,"/scripts/untargeted_lcms_data_processing.R"))
+  download.file("https://raw.githubusercontent.com/idslme/ComputationalMetabolomicsTutorials/main/R/mzml2msp.r", destfile=paste0(project_location,"/scripts/mzml2msp.r"))
+}   
+
 studyid = "ST002016" # for each new study, this parameter must be changed. 
 
 source(paste0(project_location,"/scripts/core_functions.R"))
