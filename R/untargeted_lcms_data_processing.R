@@ -48,7 +48,10 @@ generate_idsl_parameters_files_all_modes(project_location=project_location,study
 ########################
 
 run_idsl_workflows(project_location=project_location,studyid=studyid)
-
+# PFAS screening
+run_idsl_workflows_for_pfas_screening(project_location=project_location,studyid=studyid)
+load(paste0(project_location, "/results/",studyid,"/RP_NEG/UFA/pfas_ipdb/aligned_molecular_formula_table/aligned_molecular_formula.Rdata"))
+View(aligned_molecular_formula)
 
 ###############################
 #### Data Matrix Generation ###
