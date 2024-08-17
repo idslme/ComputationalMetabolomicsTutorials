@@ -12,7 +12,7 @@ project_location <- "E:/temp/metabolomics_projects/"
 ## change it to a location where you want to keep all your metabolomics studies. 
 
 setwd(project_location)
-if(!dir.exists(paste0(project_location,"/scripts/")) {
+if(!dir.exists(paste0(project_location,"/scripts/"))) {
   dir.create(paste0(project_location,"/scripts/"))
   download.file("https://raw.githubusercontent.com/idslme/ComputationalMetabolomicsTutorials/main/R/core_functions.R", destfile=paste0(project_location,"/scripts/core_functions.R"))
   download.file("https://raw.githubusercontent.com/idslme/ComputationalMetabolomicsTutorials/main/R/untargeted_lcms_data_processing.R", destfile=paste0(project_location,"/scripts/untargeted_lcms_data_processing.R"))
