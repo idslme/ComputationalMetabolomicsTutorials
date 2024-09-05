@@ -842,7 +842,7 @@ create_sample_metadata_file <- function(project_location=project_location,studyi
 
   rp_pos_file_list <- dir(paste0(project_location,"/rawdata/",studyid,"/RP_POS/MZML/"))
   if(length(rp_pos_file_list) > 0) {
-    rp_pos_df <- data.frame(SAMPLEID <- paste0("sample_",1:length(rp_pos_file_list)),
+    rp_pos_df <- data.frame(SAMPLEID = paste0("sample_",1:length(rp_pos_file_list)),
                             SampleName = rp_pos_file_list,
                             SampleSubGroup = rp_pos_file_list,
                             SampleGroup = rp_pos_file_list,
@@ -852,7 +852,7 @@ create_sample_metadata_file <- function(project_location=project_location,studyi
   }
   rp_neg_file_list <- dir(paste0(project_location,"/rawdata/",studyid,"/RP_NEG/MZML/"))
   if(length(rp_neg_file_list) > 0) {
-    rp_neg_df <- data.frame(SAMPLEID <- paste0("sample_",1:length(rp_neg_file_list)),
+    rp_neg_df <- data.frame(SAMPLEID = paste0("sample_",1:length(rp_neg_file_list)),
                             SampleName = rp_neg_file_list,
                             SampleSubGroup = rp_neg_file_list,
                             SampleGroup = rp_neg_file_list,
@@ -862,17 +862,17 @@ create_sample_metadata_file <- function(project_location=project_location,studyi
   }
   hilic_neg_file_list <- dir(paste0(project_location,"/rawdata/",studyid,"/HILIC_NEG/MZML/"))
   if(length(hilic_neg_file_list) > 0) {
-    hilic_neg_df <- data.frame(SAMPLEID <- paste0("sample_",1:length(hilic_neg_file_list)),
-                            SampleName = hilic_neg_file_list,
-                            SampleSubGroup = hilic_neg_file_list,
-                            SampleGroup = hilic_neg_file_list,
-                            DataFileName = hilic_neg_file_list,
-                            Description = hilic_neg_file_list
+    hilic_neg_df <- data.frame(SAMPLEID = paste0("sample_",1:length(hilic_neg_file_list)),
+                               SampleName = hilic_neg_file_list,
+                               SampleSubGroup = hilic_neg_file_list,
+                               SampleGroup = hilic_neg_file_list,
+                               DataFileName = hilic_neg_file_list,
+                               Description = hilic_neg_file_list
     )
   }
   hilic_pos_file_list <- dir(paste0(project_location,"/rawdata/",studyid,"/HILIC_POS/MZML/"))
   if(length(hilic_pos_file_list) > 0) {
-    hilic_pos_df <- data.frame(SAMPLEID <- paste0("sample_",1:length(hilic_pos_file_list)),
+    hilic_pos_df <- data.frame(SAMPLEID = paste0("sample_",1:length(hilic_pos_file_list)),
                                SampleName = hilic_pos_file_list,
                                SampleSubGroup = hilic_pos_file_list,
                                SampleGroup = hilic_pos_file_list,
@@ -888,6 +888,7 @@ create_sample_metadata_file <- function(project_location=project_location,studyi
 
   write.xlsx(export_list,paste0(project_location,"/rawdata/",studyid,"/",studyid,"_sample_metadata.xlsx" ))
 }
+
 
 
 
