@@ -36,7 +36,17 @@ rm(list=ls()) # clear out the environment.
 ########################
 
 project_location <- "E:/temp/metabolomics_projects/"
-studyid = "ST002016"
+## change it to a location where you want to keep all your metabolomics studies. 
+
+setwd(project_location)
+if(!dir.exists(paste0(project_location,"/scripts/"))) {
+  dir.create(paste0(project_location,"/scripts/"))
+  download.file("https://raw.githubusercontent.com/idslme/ComputationalMetabolomicsTutorials/main/R/core_functions.R", destfile=paste0(project_location,"/scripts/core_functions.R"))
+  download.file("https://raw.githubusercontent.com/idslme/ComputationalMetabolomicsTutorials/main/R/untargeted_lcms_data_processing.R", destfile=paste0(project_location,"/scripts/untargeted_lcms_data_processing.R"))
+  download.file("https://raw.githubusercontent.com/idslme/ComputationalMetabolomicsTutorials/main/R/mzml2msp.r", destfile=paste0(project_location,"/scripts/mzml2msp.r"))
+}   
+
+studyid = "ST002016" # for each new study, this parameter must be changed. 
 
 source(paste0(project_location,"/scripts/core_functions.R"))
 
@@ -60,7 +70,7 @@ setup_project_directory(project_location=project_location,studyid=studyid)
 ### Check the ST002016_sample_metadata.xlsx file under rawdata folder. For a new study, the metadata file must be re-created in the same structure.###
 
 sample_metadata_file <- paste0(project_location,"/rawdata/",studyid,"/",studyid,"_sample_metadata.xlsx")
-sample_metadata <- read_xlsx(sample_metadata_file, sheet = "RP_NEG") ## select the tab for one mode
+sample_metadata <- read_xlsx(sample_metadata_file, sheet = "RP_NEG") ## only positive mode data
 View(sample_metadata)
 sample_metadata
 
@@ -75,6 +85,10 @@ generate_idsl_parameters_files_all_modes(project_location=project_location,study
 ########################
 
 run_idsl_workflows(project_location=project_location,studyid=studyid)
+# PFAS screening
+run_idsl_workflows_for_pfas_screening(project_location=project_location,studyid=studyid)
+load(paste0(project_location, "/results/",studyid,"/RP_NEG/UFA/pfas_ipdb/aligned_molecular_formula_table/aligned_molecular_formula.Rdata"))
+View(aligned_molecular_formula)
 
 ###############################
 #### Data Matrix Generation ###
@@ -84,6 +98,7 @@ generate_first_version_datasets(project_location=project_location,studyid=studyi
 
 ## Diagnostic PCA - for drift and clustering ##
 run_pca_plots(project_location=project_location,studyid=studyid,detectionFrequency=5)
+
 
 ####################################
 ### Chemical correlation analysis ##
@@ -100,6 +115,10 @@ get_compound_correlation_network(dataset=input_dataset,
                                  toolTip = "bloodExposome_[M-H]-",
                                  FormulaFilteringRegex =".",
                                  cor_cutoff = 0.5)
+
+
+
+
 
 ````
 
