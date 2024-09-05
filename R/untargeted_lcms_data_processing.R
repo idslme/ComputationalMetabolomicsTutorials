@@ -41,10 +41,13 @@ setup_project_directory(project_location=project_location,studyid=studyid)
 # Move the test data to /rawdata/ST002016/RP_NEG/MZML/ folder
 
 ### Check the ST002016_sample_metadata.xlsx file under rawdata folder. For a new study, the metadata file must be re-created in the same structure.###
+example_sample_metadata_file <- paste0(project_location,"/rawdata/",studyid,"/",studyid,"_sample_metadata.xlsx") ##
 
+### To read the metadata file of your own study. 
 create_sample_metadata_file(project_location=project_location,studyid=studyid)
 sample_metadata_file <- paste0(project_location,"/rawdata/",studyid,"/",studyid,"-sample-metadata.xlsx")
-sample_metadata <- read_xlsx(sample_metadata_file, sheet = "RP_NEG") ## only positive mode data
+
+sample_metadata <- read_xlsx(example_sample_metadata_file, sheet = "RP_NEG") ## only positive mode data
 View(sample_metadata)
 sample_metadata
 
