@@ -886,7 +886,7 @@ create_sample_metadata_file <- function(project_location=project_location,studyi
                       "HILIC_POS" = hilic_pos_df,
                       "HILIC_NEG" = hilic_neg_df)
 
-  write.xlsx(export_list,paste0(project_location,"/rawdata/",studyid,"/",studyid,"_sample_metadata.xlsx" ))
+  write.xlsx(export_list,paste0(project_location,"/rawdata/",studyid,"/",studyid,"-sample-metadata.xlsx" ))
 }
 
 
